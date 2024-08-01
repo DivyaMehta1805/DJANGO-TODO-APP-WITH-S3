@@ -1,0 +1,202 @@
+<!-- templates/tasks_graph.html
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tasks Completed Per Day</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Tasks Completed Per Day</h1>
+    <canvas id="tasksChart" width="400" height="200"></canvas>
+
+    <script>
+        // Fetch data from the backend API
+        fetch('/tasks_graph/')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Data received:', data);  // Debugging line
+
+                // Check if data.dates and data.counts are arrays
+                if (Array.isArray(data.dates) && Array.isArray(data.counts)) {
+                    const ctx = document.getElementById('tasksChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'bar', // Change to 'line' if you prefer a line chart
+                        data: {
+                            labels: data.dates,
+                            datasets: [{
+                                label: 'Tasks Completed',
+                                data: data.counts,
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Date'
+                                    }
+                                },
+                                y: {
+                                    title: {
+                                        display: true,
+                                        text: 'Count'
+                                    },
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    console.error('Invalid data format:', data);
+                }
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    </script>
+
+</body>
+</html> -->
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <title>Tasks Completed Per Day</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Tasks Completed Per Day</h1>
+    <canvas id="tasksChart" width="400" height="200"></canvas>
+    <script>
+        // Fetch data from the backend API
+        fetch('/tasks_per_day_view/')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Data received:', data);  // Debugging line
+                // Check if data.dates and data.counts are arrays
+                if (Array.isArray(data.dates) &&
+                    Array.isArray(data.completed_counts) &&
+                    Array.isArray(data.not_completed_counts) ) {
+                    const ctx = document.getElementById('tasksChart').getContext('2d');
+                    console.log("diff"+data.completed_counts);
+
+                    console.log("isdatethere"+data.not_completed_counts);
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: data.all_dates,
+                            datasets: [{
+                                label: 'Tasks Completed',
+                                data: data.completed_counts,
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                    label: 'Not Completed Tasks',
+                                    data: data.not_completed_counts,
+                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                    borderColor: 'rgba(255, 99, 132, 1)',
+                                    borderWidth: 1
+                            }
+                        ]
+                        },
+                        options: {
+                            scales: {
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Date'
+                                    }
+                                },
+                                y: {
+                                    title: {
+                                        display: true,
+                                        text: 'Count'
+                                    },
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    console.error('Invalid data format:', data);
+                }
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    </script>
+</body>
+</html> -->
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'todo/task_graph.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Tasks Completed Per Day</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Tasks Completed Per Day</h1>
+        <canvas id="tasksChart" width="400" height="200"></canvas>
+        <script>
+            // Fetch data from the backend API
+            fetch('/tasks_per_day_view/')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Data received:', data);  // Debugging line
+                    // Check if data.dates and data.counts are arrays
+                    if (Array.isArray(data.dates) &&
+                        Array.isArray(data.completed_counts) &&
+                        Array.isArray(data.not_completed_counts)) {
+                        const ctx = document.getElementById('tasksChart').getContext('2d');
+                        console.log("diff" + data.completed_counts);
+                        console.log("isdatethere" + data.not_completed_counts);
+                        new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: data.all_dates,
+                                datasets: [{
+                                    label: 'Tasks Completed',
+                                    data: data.completed_counts,
+                                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    borderWidth: 1
+                                },
+                                {
+                                    label: 'Not Completed Tasks',
+                                    data: data.not_completed_counts,
+                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                    borderColor: 'rgba(255, 99, 132, 1)',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    x: {
+                                        title: {
+                                            display: true,
+                                            text: 'Date'
+                                        }
+                                    },
+                                    y: {
+                                        title: {
+                                            display: true,
+                                            text: 'Count'
+                                        },
+                                        beginAtZero: true
+                                    }
+                                }
+                            }
+                        });
+                    } else {
+                        console.error('Invalid data format:', data);
+                    }
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        </script>
+    </div>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!-- todo/templates/todo/task_list.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Task List</title>
+</head>
+<body>
+    <h1>Task List</h1>
+    
+    
+
+    <ul>
+        {% for todo in todo_list %}
+            <li>
+                <strong>{{ todo.text }}</strong><br>
+                {{ todo.description }}<br>
+                {% if todo.complete %}
+                    <em>Completed</em>
+                {% else %}
+                    <em>Pending</em>
+                {% endif %}
+            </li>
+        {% empty %}
+            <li>No tasks found.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
