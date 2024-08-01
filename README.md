@@ -1,6 +1,8 @@
-# Previous Repo Link:https://github.com/smahesh29/Django-ToDo-App
+# Previous Repo: 
+This work is created on top of features in https://github.com/smahesh29/Django-ToDo-App
 
-# Forked Repo Link without AWS Changes:[https://github.com/smahesh29/Django-ToDo-App](https://github.com/DivyaMehta1805/Django-ToDo-App)
+# Forked Repo Link without AWS Changes:
+This is a fork of the original repo, however, it does not support AWS.  
 
 # Detailed Description of Changes Made By Divya Mehta
 
