@@ -1,3 +1,7 @@
+# Previous Repo Link:https://github.com/smahesh29/Django-ToDo-App
+
+# Forked Repo Link without AWS Changes:[https://github.com/smahesh29/Django-ToDo-App](https://github.com/DivyaMehta1805/Django-ToDo-App)
+
 # Detailed Description of Changes Made By Divya Mehta
 
 ## Tasks Completed Per Day (Overview)
