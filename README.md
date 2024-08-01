@@ -95,78 +95,61 @@ The search functionality is embedded in the `index.html` template and interacts 
 
 
 
-# Docker Configuration
+# Docker Architecture
+
+## Overview
+
+This project uses Docker to manage a multi-container environment, consisting of a Django web application, a PostgreSQL database, and an Nginx reverse proxy. The architecture is defined using `docker-compose.yml` for orchestration and `Dockerfile` for image creation.
 
 ## docker-compose.yml
 
-Defines and runs multi-container Docker applications for the ToDo application.
-
-### Services
+The `docker-compose.yml` file configures and manages the following services:
 
 - **web**:
-  - **Build**: `./app` directory.
-  - **Command**: Waits for PostgreSQL to be ready, then starts Gunicorn.
-    ```bash
-    bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; gunicorn hello_django.wsgi:application --bind 0.0.0.0:8000'
-    ```
-  - **Volumes**:
-    - `./app/:/usr/src/app/`
-    - `static_volume:/usr/src/app/staticfiles`
-    - `media_volume:/usr/src/app/mediafiles`
-  - **Expose**: Port `8000`.
-  - **Environment Variables**:
-    ```plaintext
-    SECRET_KEY=12345
-    SQL_ENGINE=django.db.backends.postgresql
-    SQL_DATABASE=postgres
-    SQL_USER=postgres
-    SQL_PASSWORD=postgres
-    SQL_HOST=db
-    SQL_PORT=5432
-    DATABASE=postgres
-    USE_S3=TRUE
-    AWS_ACCESS_KEY_ID=<SET IT YOURSELF>
-    AWS_SECRET_ACCESS_KEY=<SET IT YOURSELF>
-    AWS_STORAGE_BUCKET_NAME=todo-app-bucket-12
-    ```
-  - **Depends On**: `db`.
+  - **Role**: Runs the Django application using Gunicorn as the WSGI server.
+  - **Build Context**: The Docker image is built from the `./app` directory.
+  - **Command**: Waits for the `db` service (PostgreSQL) to be ready before starting the Gunicorn server.
+  - **Volumes**: 
+    - Maps the local `./app` directory to `/usr/src/app` in the container.
+    - Uses `static_volume` for static files and `media_volume` for media files.
+  - **Environment Variables**: Configures Django settings, including database connection parameters and AWS S3 integration.
+  - **Dependencies**: Ensures the `web` service starts only after the `db` service is up.
 
 - **db**:
-  - **Image**: `postgres:15-alpine`.
-  - **Volumes**:
-    - `postgres_data:/var/lib/postgresql/data/`
-  - **Expose**: Port `5432`.
-  - **Environment Variables**:
-    ```plaintext
-    POSTGRES_USER=postgres
-    POSTGRES_PASSWORD=postgres
-    POSTGRES_DB=postgres
-    ```
+  - **Role**: Provides the PostgreSQL database service.
+  - **Image**: Uses `postgres:15-alpine`.
+  - **Volumes**: Stores database data persistently in `postgres_data`.
+  - **Environment Variables**: Sets up database credentials and default database.
 
 - **nginx**:
-  - **Build**: `./nginx` directory.
-  - **Volumes**:
-    - `static_volume:/usr/src/app/staticfiles`
-    - `media_volume:/usr/src/app/mediafiles`
-  - **Ports**: `1337:80`.
-  - **Depends On**: `web`.
+  - **Role**: Acts as a reverse proxy to handle HTTP requests and serve static files.
+  - **Build Context**: The Docker image is built from the `./nginx` directory.
+  - **Volumes**: Shares static and media files with the `web` service.
+  - **Ports**: Maps port `1337` on the host to port `80` in the container.
 
 ### Volumes
 
-- **postgres_data**: For PostgreSQL data.
-- **static_volume**: For static files.
-- **media_volume**: For media files.
+- **postgres_data**: Persistent storage for PostgreSQL database files.
+- **static_volume**: Storage for collected static files used by Django.
+- **media_volume**: Storage for user-uploaded media files.
 
 ## Dockerfile
 
-Builds the Docker image for the Django application.
+The `Dockerfile` outlines how to build the Docker image for the Django application:
 
-### Instructions
+- **Base Image**: Starts with `python:3.11.1-alpine`, a minimal Python environment based on Alpine Linux.
+- **Environment Variables**:
+  - `PYTHONDONTWRITEBYTECODE=1`: Prevents Python from generating `.pyc` files.
+  - `PYTHONUNBUFFERED=1`: Ensures Python output is sent directly to the terminal without buffering.
+- **Working Directory**: Sets `/usr/src/app` as the working directory inside the container.
+- **System Dependencies**:
+  - Installs necessary build tools and PostgreSQL libraries.
+- **Python Dependencies**:
+  - Upgrades `pip` and installs dependencies from `requirements.txt`.
+- **Project Code**: Copies the Django project code into the Docker image.
 
-- **Base Image**: `python:3.11.1-alpine`.
-  ```dockerfile
-  FROM python:3.11.1-alpine
+### Summary
 
-## Dockerfile
-Builds the Django app image using `python:3.11.1-alpine`. Sets up environment, installs dependencies, and copies the project into the container.
+The Docker architecture includes three primary services: the `web` service (Django app), the `db` service (PostgreSQL), and the `nginx` service (reverse proxy). The `docker-compose.yml` file orchestrates these services, while the `Dockerfile` builds the Docker image for the Django application, ensuring all necessary dependencies and configurations are in place.
+
 
