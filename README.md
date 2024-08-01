@@ -92,3 +92,14 @@ The search functionality is embedded in the `index.html` template and interacts 
 
 - **index.html**:
   - Includes a search form that posts to the `taskList` view.
+
+
+
+# Docker Configuration
+
+## docker-compose.yml
+Defines services: `web` (Django app), `db` (PostgreSQL), `nginx`. Uses volumes for static and media files. `web` waits for `db` and starts Gunicorn; `nginx` serves static files.
+
+## Dockerfile
+Builds the Django app image using `python:3.11.1-alpine`. Sets up environment, installs dependencies, and copies the project into the container.
+
