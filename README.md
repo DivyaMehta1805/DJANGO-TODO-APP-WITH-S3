@@ -98,7 +98,74 @@ The search functionality is embedded in the `index.html` template and interacts 
 # Docker Configuration
 
 ## docker-compose.yml
-Defines services: `web` (Django app), `db` (PostgreSQL), `nginx`. Uses volumes for static and media files. `web` waits for `db` and starts Gunicorn; `nginx` serves static files.
+
+Defines and runs multi-container Docker applications for the ToDo application.
+
+### Services
+
+- **web**:
+  - **Build**: `./app` directory.
+  - **Command**: Waits for PostgreSQL to be ready, then starts Gunicorn.
+    ```bash
+    bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; gunicorn hello_django.wsgi:application --bind 0.0.0.0:8000'
+    ```
+  - **Volumes**:
+    - `./app/:/usr/src/app/`
+    - `static_volume:/usr/src/app/staticfiles`
+    - `media_volume:/usr/src/app/mediafiles`
+  - **Expose**: Port `8000`.
+  - **Environment Variables**:
+    ```plaintext
+    SECRET_KEY=12345
+    SQL_ENGINE=django.db.backends.postgresql
+    SQL_DATABASE=postgres
+    SQL_USER=postgres
+    SQL_PASSWORD=postgres
+    SQL_HOST=db
+    SQL_PORT=5432
+    DATABASE=postgres
+    USE_S3=TRUE
+    AWS_ACCESS_KEY_ID=<SET IT YOURSELF>
+    AWS_SECRET_ACCESS_KEY=<SET IT YOURSELF>
+    AWS_STORAGE_BUCKET_NAME=todo-app-bucket-12
+    ```
+  - **Depends On**: `db`.
+
+- **db**:
+  - **Image**: `postgres:15-alpine`.
+  - **Volumes**:
+    - `postgres_data:/var/lib/postgresql/data/`
+  - **Expose**: Port `5432`.
+  - **Environment Variables**:
+    ```plaintext
+    POSTGRES_USER=postgres
+    POSTGRES_PASSWORD=postgres
+    POSTGRES_DB=postgres
+    ```
+
+- **nginx**:
+  - **Build**: `./nginx` directory.
+  - **Volumes**:
+    - `static_volume:/usr/src/app/staticfiles`
+    - `media_volume:/usr/src/app/mediafiles`
+  - **Ports**: `1337:80`.
+  - **Depends On**: `web`.
+
+### Volumes
+
+- **postgres_data**: For PostgreSQL data.
+- **static_volume**: For static files.
+- **media_volume**: For media files.
+
+## Dockerfile
+
+Builds the Docker image for the Django application.
+
+### Instructions
+
+- **Base Image**: `python:3.11.1-alpine`.
+  ```dockerfile
+  FROM python:3.11.1-alpine
 
 ## Dockerfile
 Builds the Django app image using `python:3.11.1-alpine`. Sets up environment, installs dependencies, and copies the project into the container.
