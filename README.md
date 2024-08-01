@@ -153,3 +153,26 @@ The `Dockerfile` outlines how to build the Docker image for the Django applicati
 The Docker architecture includes three primary services: the `web` service (Django app), the `db` service (PostgreSQL), and the `nginx` service (reverse proxy). The `docker-compose.yml` file orchestrates these services, while the `Dockerfile` builds the Docker image for the Django application, ensuring all necessary dependencies and configurations are in place.
 
 
+# Django AWS S3 Integration Architecture
+
+## Overview
+
+The `settings.py` file configures the Django project to optionally use AWS S3 for static and media file storage.
+
+## Key Functions
+
+- **Secret Key Management**: Retrieves the `SECRET_KEY` from environment variables to enhance security.
+- **Debug Mode**: Sets `DEBUG` to `True` for development, which should be turned off in production.
+- **Static and Media Files**:
+  - **Local Storage**: Configures paths for serving static and media files from local directories if AWS S3 is not used.
+  - **AWS S3 Storage**: When enabled, it sets up AWS S3 to store and serve static files and media, using credentials and settings from environment variables.
+- **CSRF Protection**: Adds local development URLs to `CSRF_TRUSTED_ORIGINS` to manage Cross-Site Request Forgery (CSRF) protection.
+- **Database Configuration**: Allows dynamic configuration of database settings through environment variables, defaulting to SQLite for development.
+- **Auto Field Setting**: Defines the default type for auto-generated primary keys.
+
+## Summary
+
+The `settings.py` file ensures the Django application can efficiently handle static and media files both locally and on AWS S3, while also managing environment-specific settings and security configurations.
+
+
+
