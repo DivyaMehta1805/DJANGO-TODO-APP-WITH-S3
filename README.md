@@ -4,7 +4,7 @@ This work is created on top of features in https://github.com/smahesh29/Django-T
 # Forked Repo Link without AWS Changes:
 This is my fork of the original repo, with the new features (bar graph & search functionality implemented) however, it does not support AWS https://github.com/DivyaMehta1805/Django-ToDo-App
 
-# Detailed Description of Changes Made By Divya Mehta
+# Detailed Description of Changes Made By Me:
 
 ## Tasks Completed Per Day (Overview)
 
